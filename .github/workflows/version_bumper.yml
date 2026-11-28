@@ -8,6 +8,10 @@ on:
       role-repos:
         required: true
         type: string
+
+permissions:
+  contents: read
+
 jobs:
   discover-role-repos:
     runs-on: ubuntu-latest
@@ -17,6 +21,8 @@ jobs:
       image: quay.io/prometheus/golang-builder:base
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       - name: Get repos for each role
         id: discover
@@ -37,4 +43,6 @@ jobs:
         include: ${{ fromJson(needs.discover-role-repos.outputs.role-repos) }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
       - run: ./.github/scripts/version_updater.sh ${{ matrix.repo }} ${{ matrix.role }} ${{ matrix.type }}

@@ -1,6 +1,6 @@
 ---
 on:
-  pull_request_target:
+  pull_request_target: # zizmore: ignore[dangerous-triggers]
     types: [opened, edited, synchronize, reopened]
 permissions:
   pull-requests: write

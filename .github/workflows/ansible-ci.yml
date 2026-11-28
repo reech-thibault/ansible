@@ -25,6 +25,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       - name: Lint collection
         uses: ansible/ansible-lint@b5609548ec49df35aabb89b6cb71de8f398cd195  # v26.11.1
@@ -35,6 +37,8 @@ jobs:
       image: quay.io/prometheus/golang-builder:base
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
       - name: Lint arguments spec
         run: ./.github/scripts/lint_arguments_spec.sh
 
@@ -42,6 +46,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
       - name: Run action
         uses: hoo29/little-timmy@c8ca5086db961499fc3d4e37637f566c3d0ec6d6 # v3-action
 
@@ -51,6 +57,8 @@ jobs:
       versions: ${{ steps.supported-ansible-versions.outputs.result }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       - name: Get Ansible versions that the collection supports
         id: supported-ansible-versions
@@ -58,7 +66,7 @@ jobs:
           echo "result=$(python ./.github/scripts/collection_version_parser.py)" | tee -a "$GITHUB_OUTPUT"
 
   ansible-test-sanity:
-    uses: ./.github/workflows/ansible-test-sanity.yml
+    uses: $/.github/workflows/ansible-test-sanity.yml
     needs:
       - discover-ansible-versions
     with:
@@ -75,6 +83,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
+          persist-credentials: false
 
       - name: Fetch current PR labels
         id: fetch-labels
@@ -110,7 +119,7 @@ jobs:
           done | tr '\n' ',' | sed '$s/,$//'`]" | tee -a "$GITHUB_OUTPUT"
 
   molecule:
-    uses: ./.github/workflows/ansible-test-molecule.yml
+    uses: $/.github/workflows/ansible-test-molecule.yml
     needs:
       - discover-ansible-tests
       - discover-ansible-versions
@@ -126,7 +135,7 @@ jobs:
         role: ${{ fromJson(needs.discover-ansible-tests.outputs.ansible-roles) }}
 
   ansible-test-integration:
-    uses: ./.github/workflows/ansible-test-integration.yml
+    uses: $/.github/workflows/ansible-test-integration.yml
     needs:
       - discover-ansible-tests
       - discover-ansible-versions

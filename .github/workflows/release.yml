@@ -1,7 +1,7 @@
 ---
 name: Ansible collection release
 on:
-  pull_request_target:
+  pull_request_target: # zizmore: ignore[dangerous-triggers]
     types:
       - closed
 
@@ -17,13 +17,14 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
+          persist-credentials: false
 
       - name: "Install tools"
         run: "python -m pip install --upgrade ansible-core antsibull-changelog --disable-pip-version-check"
 
       - name: "Calculate next version"
         id: version
-        uses: gardar/version-drafter-action@event-triggers # Until PR gets merged: https://github.com/patrickjahns/version-drafter-action/pull/343
+        uses: gardar/version-drafter-action@event-triggers # zizmore: ignore[unpinned-uses] # Until PR gets merged: https://github.com/patrickjahns/version-drafter-action/pull/343
         env:
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
 
@@ -31,7 +32,7 @@ jobs:
         run: antsibull-changelog release -v --version "${{ steps.version.outputs.next-version }}"
 
       - name: "Run antsichaut"
-        uses: gardar/antsichaut@fix-missing-changes
+        uses: gardar/antsichaut@fix-missing-changes # zizmore: ignore[unpinned-uses]
         with:
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
           since_version: "${{ steps.version.outputs.current-version }}"
@@ -54,6 +55,7 @@ jobs:
       - name: "Checkout updated branch"
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
+          persist-credentials: false
           ref: ${{ github.event.pull_request.base.ref }}
 
       - name: "Publish release"

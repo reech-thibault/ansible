@@ -6,7 +6,7 @@ concurrency:
   cancel-in-progress: true
 
 on:
-  pull_request_target:
+  pull_request_target: # zizmore: ignore[dangerous-triggers]
     types: [opened, synchronize, reopened, closed]
 
 env:
@@ -35,7 +35,7 @@ jobs:
     needs: get-tags
     permissions:
       contents: read
-    uses: ansible-community/github-docs-build/.github/workflows/_shared-docs-build-pr.yml@main
+    uses: ansible-community/github-docs-build/.github/workflows/_shared-docs-build-pr.yml@d4620d5af215370973e27ac7afc5ccaf7551230a # main
     with:
       collection-name: prometheus.prometheus
       # Pinned until https://github.com/ansible-community/antsibull-docs-loader/pull/17
@@ -63,7 +63,7 @@ jobs:
       id-token: write
     needs: [build-docs]
     name: Publish Ansible Docs
-    uses: ansible-community/github-docs-build/.github/workflows/_shared-docs-build-publish-gh-pages.yml@main
+    uses: ansible-community/github-docs-build/.github/workflows/_shared-docs-build-publish-gh-pages.yml@d4620d5af215370973e27ac7afc5ccaf7551230a # main
     with:
       artifact-name: ${{ needs.build-docs.outputs.artifact-name }}
       publish-gh-pages-branch: true
@@ -79,7 +79,7 @@ jobs:
     name: PR comments
     steps:
       - name: PR comment
-        uses: ansible-community/github-docs-build/actions/ansible-docs-build-comment@main
+        uses: ansible-community/github-docs-build/actions/ansible-docs-build-comment@d4620d5af215370973e27ac7afc5ccaf7551230a # main
         with:
           body-includes: "## Docs Build"
           action: ${{ needs.build-docs.outputs.changed != 'true' && 'remove' || '' }}
